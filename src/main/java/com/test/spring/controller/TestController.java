@@ -65,6 +65,12 @@ public class TestController {
     public Object get() {
         RedisModel m = new RedisModel();
         m.setRedisKey("zhangsanKey02");
+        Object o = service.get(m.getRedisKey());
+        if(o instanceof RedisModel) {
+            RedisModel model = (RedisModel) o;
+
+            System.out.println(model.getName());
+        }
         return service.get(m.getRedisKey());
     }
 

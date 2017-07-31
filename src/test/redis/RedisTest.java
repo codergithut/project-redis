@@ -62,7 +62,9 @@ public class RedisTest {
             }
         };
 
-        jedis.subscribe(jedisPubSub, "chat");
+        Jedis jedis1 = new Jedis("192.168.50.210");
+
+        jedis1.subscribe(jedisPubSub, "chat");
 
     }
 

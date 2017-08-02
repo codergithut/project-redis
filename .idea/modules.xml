@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/project-redis.iml" filepath="$PROJECT_DIR$/project-redis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/project-redis.iml" filepath="$PROJECT_DIR$/.idea/project-redis.iml" />
     </modules>
   </component>
 </project>

@@ -1,6 +1,6 @@
 package redis;
 
-import com.test.spring.sub.RedisMsgPubSubListener;
+import com.client.file.listen.RedisMsgJedisPubSub;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
@@ -13,7 +13,7 @@ public class TestSubscribe {
     @Test
     public void testSubscribe() throws Exception{
         Jedis jedis = new Jedis("192.168.50.210");
-        RedisMsgPubSubListener listener = new RedisMsgPubSubListener();
+        RedisMsgJedisPubSub listener = new RedisMsgJedisPubSub();
         jedis.subscribe(listener, "site-list");
         //other code
     }

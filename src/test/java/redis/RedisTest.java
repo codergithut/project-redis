@@ -19,27 +19,6 @@ import java.util.*;
  */
 public class RedisTest {
 
-
-    /**
-     * 需要发送到服务端的信息
-     */
-    private final static String SEND_FILES = "file-send-set";
-
-    /**
-     * 成功报文
-     */
-    private final static String SUCCESS_FILES = "file-success-set";
-
-    /**
-     * 失败报文存放
-     */
-    private final static String ERROR_FILES = "file-error-set";
-
-    /**
-     * 报文信息
-     */
-    private final static String FILES_INFO = "file-info-set";
-
     private Map<String, String> fileMessages = new HashMap<String, String>();
 
     @Before

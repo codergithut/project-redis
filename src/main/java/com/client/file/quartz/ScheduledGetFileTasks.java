@@ -1,9 +1,9 @@
 package com.client.file.quartz;
 
+import com.client.send.service.SaveFinalMessage;
 import com.common.model.DocumentInfo;
 import com.common.model.ResponseMessage;
 import com.common.util.FileUtil;
-import com.common.util.JaxbUtil;
 import com.common.util.RSASignature;
 import com.common.util.XmlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,9 @@ public class ScheduledGetFileTasks {
     @Qualifier("write")
     Jedis jedis;
 
+    @Autowired
+    SaveFinalMessage saveFinalMessage;
+
     static String PUBLIC_KEY="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDT9TsOfGqhv+3TxeU/jNwskOlXPF35Gffm4oGjUyC2ajplEiRZ+57x5wYXtqh1B3ulnSQY1PLO/Pw8i0jg1uwQoO0izGk31CrIloFpKAcve5JfGx0XBK1cffsGpFvjzL/gvRZHHvqGOH1BOyST8EcOrDnuT3Y3FtYbGdeDlH6AGQIDAQAB";
 
 
@@ -39,10 +42,7 @@ public class ScheduledGetFileTasks {
     private final static String WAITE_SEND_KEY = "files-wait-send-hash";
 
 
-    /**
-     * 最终的生成文件（包含响应文件）
-     */
-    private final static String XSD_FILES_FINAL = "files-final-hash";
+
 
 
     /**
@@ -130,7 +130,7 @@ public class ScheduledGetFileTasks {
 
         if (jedis.sismember(FILES_SIGN_SET, docInfo.getSign())) {
 
-            saveErrorMessage(getResPonseMessage(docInfo, "DOUBLE"), docInfo);
+            saveFinalMessage.saveMessage(docInfo, "DOUBLE");
 
             return false;
 
@@ -154,7 +154,7 @@ public class ScheduledGetFileTasks {
         XmlUtil.XmlValidateResult result = XmlUtil.checkXmlByXsd(content, xsdString);
 
         if(!result.isValidated()) {
-            saveErrorMessage(getResPonseMessage(docInfo, "XSD"), docInfo);
+            saveFinalMessage.saveMessage(docInfo, "XSD");
             return false;
         }
 
@@ -167,7 +167,7 @@ public class ScheduledGetFileTasks {
 
         if(!checkRSA) {
 
-            saveErrorMessage(getResPonseMessage(docInfo, "RSA"), docInfo);
+            saveFinalMessage.saveMessage(docInfo, "RSA");
 
             return false;
         }
@@ -180,57 +180,9 @@ public class ScheduledGetFileTasks {
         return new String(fileBytes, "UTF-8");
     }
 
-    private ResponseMessage getResPonseMessage(DocumentInfo docInfo, String type) {
-        ResponseMessage responseMessage = new ResponseMessage();
-
-        responseMessage.setBizMsgId(docInfo.getBizMsgId());
-
-        responseMessage.setRecType(docInfo.getRecType());
-
-        if("RSA".equals(type)) {
-
-            responseMessage.setResponseCode("00001");
-
-            responseMessage.setSuccessFlag("false");
-
-            responseMessage.setResponseInfo("数字签名验证失败!");
-        }
-
-        if("DOUBLE".equals(type)) {
-
-            responseMessage.setResponseCode("00003");
-
-            responseMessage.setSuccessFlag("false");
-
-            responseMessage.setResponseInfo("重复验证未通过!");
-        }
-
-        if("XSD".equals(type)) {
-
-            responseMessage.setResponseCode("00002");
-
-            responseMessage.setSuccessFlag("false");
-
-            responseMessage.setResponseInfo("XSD验证失败!");
-        }
-
-        return responseMessage;
-    }
 
 
-    private void saveErrorMessage(ResponseMessage responseMessage, DocumentInfo documentInfo) throws UnsupportedEncodingException {
 
-        Map<String,String> data = new HashMap<String,String>();
-
-        String resp =  new String(JaxbUtil.convertToXml(responseMessage).getBytes("UTF-8"),"UTF-8");
-
-        documentInfo.setReponseContent(resp);
-
-        data.put(documentInfo.getFileName(), documentInfo.toString());
-
-        jedis.hmset(XSD_FILES_FINAL, data);
-
-    }
 
 
 }

@@ -27,8 +27,8 @@ public class quartzConfig {
     public SchedulerFactoryBean schedulerFactory() throws Exception {
         SchedulerFactoryBean bean = new SchedulerFactoryBean();
         bean.setTriggers (
-//                schedledGetFileConf.getFileCronTriggerBean().getObject()
-//                schedledSendFileConf.sendFileCronTriggerBean().getObject()
+                schedledGetFileConf.getFileCronTriggerBean().getObject()
+                ,schedledSendFileConf.sendFileCronTriggerBean().getObject()
         );
         return bean;
     }

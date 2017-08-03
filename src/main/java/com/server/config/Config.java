@@ -2,6 +2,7 @@ package com.server.config;
 
 import com.client.config.MessageListenerContainer;
 
+import com.common.util.AESUtil;
 import com.server.received.MyMessageContainer;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
@@ -31,6 +32,8 @@ public class Config {
     @Autowired
     ConnectionFactory connectionFactory;
 
+    @Autowired
+    MyMessageContainer myMessageContainer;
 
     public static final String EXCHANGE_DIRECT   = "exchange";
 
@@ -49,12 +52,17 @@ public class Config {
 
     @Bean
     public MyMessageContainer getMyMessageContainer(){
-        return new MyMessageContainer();
+        return myMessageContainer;
     }
 
     @Bean
     public DirectExchange directExchange() {
         return new DirectExchange(EXCHANGE_DIRECT);
+    }
+
+    @Bean
+    public AESUtil getAESUtil() {
+        return new AESUtil();
     }
 
 

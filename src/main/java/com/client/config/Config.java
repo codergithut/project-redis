@@ -1,6 +1,7 @@
 package com.client.config;
 
 import com.client.received.MyMessageContainer;
+import com.common.util.AESUtil;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -33,8 +34,16 @@ public class Config {
         return new Jedis("192.168.50.210");
     }
 
+    @Bean
+    public AESUtil getAESUtil() {
+        return new AESUtil();
+    }
+
     @Autowired
     ConnectionFactory connectionFactory;
+
+    @Autowired
+    MyMessageContainer myMessageContainer;
 
     public static final String EXCHANGE_DIRECT   = "exchange";
 
@@ -54,7 +63,7 @@ public class Config {
 
     @Bean
     public MyMessageContainer getMyMessageContainer(){
-        return new MyMessageContainer();
+        return myMessageContainer;
     }
 
     @Bean

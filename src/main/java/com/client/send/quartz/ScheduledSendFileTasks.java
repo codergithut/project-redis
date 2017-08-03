@@ -5,6 +5,7 @@ import com.client.config.SendMessage;
 import com.common.model.DocumentInfo;
 import com.common.model.FileMessage;
 import com.common.model.MessageClient;
+import com.common.util.AESUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,6 +36,9 @@ public class ScheduledSendFileTasks {
     @Qualifier("read")
     Jedis jedis;
 
+    @Autowired
+    AESUtil aesUtil;
+
     static String PUBLIC_KEY="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDT9TsOfGqhv+3TxeU/jNwskOlXPF35Gffm4oGjUyC2ajplEiRZ+57x5wYXtqh1B3ulnSQY1PLO/Pw8i0jg1uwQoO0izGk31CrIloFpKAcve5JfGx0XBK1cffsGpFvjzL/gvRZHHvqGOH1BOyST8EcOrDnuT3Y3FtYbGdeDlH6AGQIDAQAB";
 
 
@@ -55,7 +59,13 @@ public class ScheduledSendFileTasks {
         /**
          * 根据报文信息进行封装
          */
-        List<String> sendMessages= jedis.hvals(WAITE_SEND_KEY);
+        jedis.watch(WAITE_SEND_KEY);
+
+        List<String> sendMessages = jedis.hvals(WAITE_SEND_KEY);
+
+        if(sendMessages == null) {
+            return ;
+        }
 
         MessageClient messageClient = new MessageClient();
 
@@ -64,6 +74,8 @@ public class ScheduledSendFileTasks {
         messageClient.setQueueName("10000001");
 
         for(String sendMessage : sendMessages) {
+
+            System.out.println("sendMessage : " + sendMessage);
 
             DocumentInfo documentInfo = JSON.parseObject(sendMessage, DocumentInfo.class);
 
@@ -79,7 +91,8 @@ public class ScheduledSendFileTasks {
 
             String ss = JSON.toJSONString(messageClient);
 
-            sendMessage.sendDirectMsg("exchange", JSON.toJSONString(messageClient), "100010001000");
+
+            sendMessage.sendDirectMsg("exchange", aesUtil.encrypt(JSON.toJSONString(messageClient)), "100010001000");
 
         }
 
@@ -95,7 +108,10 @@ public class ScheduledSendFileTasks {
         fileMessage.setFileName(documentInfo.getFileName());
         fileMessage.setRectype(documentInfo.getRecType());
 
-        if(documentInfo.getReponseContent() != null && documentInfo.getReponseContent().length() > 0) {
+        System.out.println("response : " + documentInfo.getReponseContent());
+
+
+        if(documentInfo.getReponseContent() != null) {
 
             /**
              * 对消息进行设置告诉服务端该消息有问题无需进行多余操作只要备份下就好

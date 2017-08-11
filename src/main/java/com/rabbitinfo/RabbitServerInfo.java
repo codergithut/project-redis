@@ -32,7 +32,7 @@ public class RabbitServerInfo {
 
     public static void main(String[] args) {
 
-        String info = HttpClientUtils.getConnect("http://127.0.0.1:15672/api/queues/%2F/100010001000", "guest", "guest");
+        String info = HttpClientUtils.getConnect("http://10.1.1.153:15672/api/queues/%2F/100010001000", "tianjian", "tianjian");
 
         RabbitmqQueueInfo rabbitmqQueueInfo = JSON.parseObject(info, RabbitmqQueueInfo.class);
 

@@ -60,6 +60,8 @@ public class RabbitmqQueueInfo {
 
         private Integer deliver_get;
 
+        private Integer disk_reads;
+
         public Integer getPublish() {
             return publish;
         }
@@ -74,6 +76,14 @@ public class RabbitmqQueueInfo {
 
         public void setDeliver_get(Integer deliver_get) {
             this.deliver_get = deliver_get;
+        }
+
+        public Integer getDisk_reads() {
+            return disk_reads;
+        }
+
+        public void setDisk_reads(Integer disk_reads) {
+            this.disk_reads = disk_reads;
         }
     }
 }

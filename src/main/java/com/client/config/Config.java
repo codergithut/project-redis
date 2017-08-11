@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * @author <a href="mailto:Administrator@gtmap.cn">Administrator</a>
  * @version 1.0, 2017/8/1
@@ -92,6 +94,11 @@ public class Config {
         container.setQueues(ReceiveMessageQueue());
         container.setListener(getMyMessageContainer());
         return container;
+    }
+
+    @Bean
+    public ThreadPoolExecutor.CallerRunsPolicy getPolicy() {
+        return new ThreadPoolExecutor.CallerRunsPolicy();
     }
 
 

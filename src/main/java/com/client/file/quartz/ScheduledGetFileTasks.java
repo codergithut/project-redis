@@ -2,8 +2,8 @@ package com.client.file.quartz;
 
 import com.client.send.service.SaveFinalMessage;
 import com.common.model.DocumentInfo;
-import com.common.model.ResponseMessage;
-import com.common.util.FileUtil;
+import com.common.util.FileOperation;
+import com.common.util.FileOperationImpl;
 import com.common.util.RSASignature;
 import com.common.util.XmlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -30,6 +31,10 @@ public class ScheduledGetFileTasks {
     @Qualifier("write")
     Jedis jedis;
 
+
+    FileOperation fileOperation = new FileOperationImpl();
+
+
     @Autowired
     SaveFinalMessage saveFinalMessage;
 
@@ -40,9 +45,6 @@ public class ScheduledGetFileTasks {
      * 需要确认的文件消息
      */
     private final static String WAITE_SEND_KEY = "files-wait-send-hash";
-
-
-
 
 
     /**
@@ -62,13 +64,14 @@ public class ScheduledGetFileTasks {
 
 
     public void getFileSchedule() throws Exception {
-        System.out.println("this is sssss");
+
         getAllFiles("E:\\wechart\\project-redis\\src\\main\\resources\\xml");
+
 
     }
 
-    private void initXSDResource() throws UnsupportedEncodingException {
-        List<File> files = FileUtil.getFiles("C:\\gtmap_server\\xsd");
+    private void initXSDResource() throws IOException {
+        List<File> files = fileOperation.getFilesByPath(new File("C:\\gtmap_server\\xsd"), null);
 
         Map<String,String> xsdInfos = new HashMap<String,String>();
 
@@ -87,7 +90,7 @@ public class ScheduledGetFileTasks {
 
     private void getAllFiles (String path) throws Exception {
 
-        List<File> files = FileUtil.getFiles(path);
+        List<File> files = fileOperation.getFilesByPath(new File(path), null);
 
         //连接本地的 Redis 服务
         Map<String,String> docInfos = new HashMap<String, String>();
@@ -103,9 +106,6 @@ public class ScheduledGetFileTasks {
             docInfo.setBizMsgId(bizId);
             docInfo.setRequestContent(content);
             docInfos.put(sign, docInfo.toString());
-
-
-
 
             /**
              * 如何各项验证通过
@@ -175,8 +175,8 @@ public class ScheduledGetFileTasks {
         return true;
     }
 
-    private String getFileByByte(File file) throws UnsupportedEncodingException {
-        byte[] fileBytes = FileUtil.getBytes(file);
+    private String getFileByByte(File file) throws IOException {
+        byte[] fileBytes = fileOperation.getFileAsBytes(file);
         return new String(fileBytes, "UTF-8");
     }
 

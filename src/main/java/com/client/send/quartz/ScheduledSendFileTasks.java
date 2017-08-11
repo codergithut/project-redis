@@ -39,9 +39,6 @@ public class ScheduledSendFileTasks {
     @Autowired
     AESUtil aesUtil;
 
-    static String PUBLIC_KEY="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDT9TsOfGqhv+3TxeU/jNwskOlXPF35Gffm4oGjUyC2ajplEiRZ+57x5wYXtqh1B3ulnSQY1PLO/Pw8i0jg1uwQoO0izGk31CrIloFpKAcve5JfGx0XBK1cffsGpFvjzL/gvRZHHvqGOH1BOyST8EcOrDnuT3Y3FtYbGdeDlH6AGQIDAQAB";
-
-
     /**
      * 需要发送的文件消息
      */
